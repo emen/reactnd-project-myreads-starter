@@ -9,11 +9,13 @@ const Book = ({ book, onMove }) => {
           style={{
             width: 128,
             height: 193,
-            backgroundImage: `url("${book.imageLinks.thumbnail}")`,
+            backgroundImage: book.imageLinks
+              ? `url("${book.imageLinks.thumbnail}")`
+              : null,
           }}
         ></div>
         <ChangeMenu
-          shelf={book.shelf || "None"}
+          shelf={book.shelf || "none"}
           onSelect={(shelf) => onMove({ ...book, shelf })}
         />
       </div>

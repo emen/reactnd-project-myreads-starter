@@ -1,11 +1,5 @@
 import { useState } from "react";
-
-const shelfs = {
-  "Currently Reading": "currentlyReading",
-  "Want to Read": "wantToRead",
-  Read: "read",
-  None: "none",
-};
+import { allShelfs } from "./support/ShelfName";
 
 const ChangeMenu = ({ shelf, onSelect }) => {
   const [selection, setSelection] = useState(shelf);
@@ -17,13 +11,13 @@ const ChangeMenu = ({ shelf, onSelect }) => {
 
   return (
     <div className="book-shelf-changer">
-      <select value={shelf} onChange={handleSelect}>
+      <select value={selection} onChange={handleSelect}>
         <option value="move" disabled>
           Move to...
         </option>
-        {Object.entries(shelfs).map(([fullName, id]) => (
-          <option key={id} value={fullName}>
-            {fullName}
+        {Object.entries(allShelfs()).map(([id, name]) => (
+          <option key={id} value={id}>
+            {name}
           </option>
         ))}
       </select>

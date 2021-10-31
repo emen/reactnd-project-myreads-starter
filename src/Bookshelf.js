@@ -1,4 +1,5 @@
 import Book from "./Book";
+import { shelfToID } from "./support/ShelfName";
 
 const Bookshelf = ({ books, shelf, onChange }) => {
   return (
@@ -7,7 +8,7 @@ const Bookshelf = ({ books, shelf, onChange }) => {
       <div className="bookshelf-books">
         <ol className="books-grid">
           {books
-            .filter((book) => book.shelf === shelf)
+            .filter((book) => book.shelf === shelfToID(shelf))
             .map((book) => (
               <li key={book.id}>
                 <Book book={book} onMove={onChange} />

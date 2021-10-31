@@ -1,29 +1,39 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Book from "./Book";
-import * as BooksAPI from "./BooksAPI";
+import * as BooksAPI from "./support/BooksAPI";
 
-const Search = ({ onMove, myBooks }) => {
+const Search = () => {
   const [term, setTerm] = useState("");
-  const [books, setBooks] = useState([]);
+  const [results, setResults] = useState([]);
 
   useEffect(() => {
     if (!term) {
-      setBooks([]);
+      setResults([]);
     } else {
       search(term);
     }
   }, [term]);
 
-  function updatedBook(book) {
-    const myBook = myBooks.find((b) => b.id === book.id);
-    return myBook ? { ...book, shelf: myBook.shelf } : book;
-  }
+  const booksWithShelf = async (results) => {
+    const myBooks = await BooksAPI.getAll();
+    const bookWithShelf = (r) => {
+      const b = myBooks.find((b) => b.id === r.id);
+      return b ? b : r;
+    };
+
+    setResults(results.map(bookWithShelf));
+  };
+
+  const handleMove = async (book) => {
+    await BooksAPI.update(book, book.shelf);
+    await booksWithShelf(results);
+  };
 
   async function search(term) {
     const results = await BooksAPI.search(term);
     const books = !results || results.error ? [] : results;
-    setBooks(books.map(updatedBook));
+    await booksWithShelf(books);
   }
 
   return (
@@ -43,9 +53,9 @@ const Search = ({ onMove, myBooks }) => {
       </div>
       <div className="search-books-results">
         <ol className="books-grid">
-          {books.map((book) => (
+          {results.map((book) => (
             <li key={book.id}>
-              <Book book={book} onMove={onMove} />
+              <Book book={book} onMove={handleMove} />
             </li>
           ))}
         </ol>
